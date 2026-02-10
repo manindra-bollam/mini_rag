@@ -1,130 +1,173 @@
 """
-Integration tests for RAG engine.
+Main RAG engine that orchestrates document processing, embedding, and querying.
 """
 import json
-import tempfile
 from pathlib import Path
+from typing import List, Optional
 
-import pytest
-from src.rag_engine import RAGEngine
+from .document_processor import Chunk, DocumentProcessor, TextChunker
+from .embeddings import EmbeddingEngine, FAISSIndex
 
 
-class TestRAGEngineIntegration:
-    """Integration tests for the full RAG pipeline."""
+class RAGEngine:
+    """Main RAG engine for document retrieval."""
     
-    @pytest.fixture
-    def temp_dir(self):
-        """Create a temporary directory for testing."""
-        with tempfile.TemporaryDirectory() as tmpdir:
-            yield Path(tmpdir)
-    
-    def test_query_formatting(self) -> None:
-        """Test query result formatting."""
-        # This is a smoke test - just checks the format
-        # In real scenario, we'd need actual PDFs
-        rag = RAGEngine()
+    def __init__(
+        self,
+        data_dir: str = "./data",
+        chunk_size: int = 500,
+        overlap: int = 50,
+        model_name: str = "sentence-transformers/all-MiniLM-L6-v2"
+    ):
+        """
+        Initialize RAG engine.
         
-        # Create a mock result
-        mock_results = [{
-            'doc_id': 'test_doc',
-            'page': 1,
-            'chunk_id': 0,
-            'score': 0.95,
-            'text': 'This is a test chunk of text.'
-        }]
+        Args:
+            data_dir: Directory containing PDF files
+            chunk_size: Size of text chunks in characters
+            overlap: Overlap between chunks in characters
+            model_name: Name of embedding model
+        """
+        self.data_dir = data_dir
+        self.doc_processor = DocumentProcessor(data_dir)
+        self.chunker = TextChunker(chunk_size, overlap)
+        self.embedding_engine = EmbeddingEngine(model_name)
+        self.index = FAISSIndex(dimension=384)
+        self.chunks: List[Chunk] = []
         
-        # Test JSON serialization
-        json_str = json.dumps(mock_results)
-        loaded = json.loads(json_str)
+    def build_index(self) -> None:
+        """Build the RAG index from PDFs in data directory."""
+        print("=" * 50)
+        print("Building RAG Index")
+        print("=" * 50)
         
-        assert len(loaded) == 1
-        assert loaded[0]['doc_id'] == 'test_doc'
-        assert loaded[0]['score'] == 0.95
-    
-    def test_print_results_no_crash(self) -> None:
-        """Test that print_results doesn't crash."""
-        rag = RAGEngine()
+        # Load PDFs
+        print("\n1. Loading PDFs...")
+        documents = self.doc_processor.load_pdfs()
+        print(f"Loaded {len(documents)} documents")
         
-        results = [
-            {
-                'doc_id': 'doc1',
-                'page': 1,
-                'chunk_id': 0,
-                'score': 0.9,
-                'text': 'Short text'
-            },
-            {
-                'doc_id': 'doc2',
-                'page': 2,
-                'chunk_id': 1,
-                'score': 0.8,
-                'text': 'A' * 600  # Long text to test truncation
+        # Chunk documents
+        print("\n2. Chunking documents...")
+        self.chunks = self.chunker.chunk_documents(documents)
+        print(f"Created {len(self.chunks)} chunks")
+        
+        # Generate embeddings
+        print("\n3. Generating embeddings...")
+        texts = [chunk.text for chunk in self.chunks]
+        embeddings = self.embedding_engine.embed_texts(texts)
+        print(f"Generated {len(embeddings)} embeddings")
+        
+        # Build FAISS index
+        print("\n4. Building FAISS index...")
+        self.index.build_index(embeddings, self.chunks)
+        
+        print("\n" + "=" * 50)
+        print("Index built successfully!")
+        print("=" * 50)
+        
+    def query(self, query_text: str, top_k: int = 3) -> List[dict]:
+        """
+        Query the RAG system.
+        
+        Args:
+            query_text: Query string
+            top_k: Number of results to return
+            
+        Returns:
+            List of result dictionaries
+        """
+        # Generate query embedding
+        query_embedding = self.embedding_engine.embed_texts([query_text])[0]
+        
+        # Search index
+        results = self.index.search(query_embedding, top_k)
+        
+        # Format results
+        formatted_results = []
+        for chunk, score in results:
+            result = {
+                "doc_id": chunk.doc_id,
+                "page": chunk.page,
+                "chunk_id": chunk.chunk_id,
+                "score": round(score, 4),
+                "text": chunk.text
             }
-        ]
-        
-        # Should not raise any exception
-        try:
-            rag.print_results(results)
-            assert True
-        except Exception as e:
-            pytest.fail(f"print_results raised exception: {e}")
+            formatted_results.append(result)
+            
+        return formatted_results
     
-    def test_save_load_results_json(self, temp_dir: Path) -> None:
-        """Test saving and loading results as JSON."""
-        rag = RAGEngine()
+    def save_index(self, index_dir: str = "./index") -> None:
+        """
+        Save index to disk.
         
-        results = [{
-            'doc_id': 'test',
-            'page': 1,
-            'chunk_id': 0,
-            'score': 0.95,
-            'text': 'Test text with unicode: 你好 🔍'
-        }]
+        Args:
+            index_dir: Directory to save index files
+        """
+        index_path = Path(index_dir)
+        index_path.mkdir(exist_ok=True)
         
-        json_path = temp_dir / "test_results.json"
-        rag.save_results_json(results, str(json_path))
+        faiss_path = str(index_path / "faiss.index")
+        chunks_path = str(index_path / "chunks.pkl")
         
-        # Verify file exists and is valid JSON
-        assert json_path.exists()
+        self.index.save(faiss_path, chunks_path)
         
-        with open(json_path, 'r', encoding='utf-8') as f:
-            loaded = json.load(f)
+    def load_index(self, index_dir: str = "./index") -> None:
+        """
+        Load index from disk.
         
-        assert loaded == results
-        assert loaded[0]['text'] == 'Test text with unicode: 你好 🔍'
-
-
-class TestRAGEngineParameters:
-    """Test RAG engine with different parameters."""
-    
-    def test_custom_chunk_size(self) -> None:
-        """Test creating RAG engine with custom chunk size."""
-        rag = RAGEngine(chunk_size=300, overlap=30)
+        Args:
+            index_dir: Directory containing index files
+        """
+        index_path = Path(index_dir)
         
-        assert rag.chunker.chunk_size == 300
-        assert rag.chunker.overlap == 30
-    
-    def test_custom_directories(self) -> None:
-        """Test custom data and index directories."""
-        rag = RAGEngine(data_dir="./custom_data")
+        faiss_path = str(index_path / "faiss.index")
+        chunks_path = str(index_path / "chunks.pkl")
         
-        assert rag.data_dir == "./custom_data"
-
-
-class TestEdgeCases:
-    """Test edge cases and error handling."""
-    
-    def test_query_with_empty_index(self) -> None:
-        """Test querying before index is built."""
-        rag = RAGEngine()
+        if not Path(faiss_path).exists() or not Path(chunks_path).exists():
+            raise FileNotFoundError(
+                f"Index files not found in {index_dir}. Please build the index first."
+            )
         
-        # Should raise an error when querying without index
-        with pytest.raises(ValueError):
-            rag.query("test query")
-    
-    def test_load_nonexistent_index(self) -> None:
-        """Test loading index that doesn't exist."""
-        rag = RAGEngine()
+        self.index.load(faiss_path, chunks_path)
+        self.chunks = self.index.chunks
         
-        with pytest.raises(FileNotFoundError):
-            rag.load_index("./nonexistent_index")
+        # Load embedding model (needed for queries)
+        self.embedding_engine.load_model()
+        
+    def print_results(self, results: List[dict]) -> None:
+        """
+        Print query results in a formatted way.
+        
+        Args:
+            results: List of result dictionaries
+        """
+        print("\n" + "=" * 80)
+        print("SEARCH RESULTS")
+        print("=" * 80)
+        
+        for i, result in enumerate(results, 1):
+            print(f"\n[Result {i}]")
+            print(f"Document: {result['doc_id']}")
+            print(f"Page: {result['page']}")
+            print(f"Score: {result['score']:.4f}")
+            print(f"\nExcerpt:")
+            print("-" * 80)
+            # Truncate very long text for display
+            text = result['text']
+            if len(text) > 500:
+                text = text[:500] + "..."
+            print(text)
+            print("-" * 80)
+            
+    def save_results_json(self, results: List[dict], output_path: str = "results.json") -> None:
+        """
+        Save results to JSON file.
+        
+        Args:
+            results: List of result dictionaries
+            output_path: Path to output JSON file
+        """
+        with open(output_path, 'w', encoding='utf-8') as f:
+            json.dump(results, f, indent=2, ensure_ascii=False)
+            
+        print(f"\nResults saved to {output_path}")
