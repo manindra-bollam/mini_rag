@@ -1,4 +1,4 @@
-# Mini-RAG Quick Reference
+# Mini RAG Quick Reference
 
 ## Installation
 
@@ -57,11 +57,6 @@ python evaluate.py
 # Format code
 black src tests
 
-# Lint
-flake8 src tests
-
-# Type check
-mypy src
 ```
 
 ## Makefile Shortcuts

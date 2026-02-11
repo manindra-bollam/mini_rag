@@ -1,10 +1,9 @@
 """
-Streamlit UI for Mini-RAG.
+Streamlit UI for Mini RAG.
 
 Usage:
     streamlit run app.py
 """
-import sys
 from pathlib import Path
 
 import streamlit as st
@@ -17,7 +16,6 @@ def initialize_rag() -> RAGEngine:
     if 'rag' not in st.session_state:
         st.session_state.rag = RAGEngine()
         
-        # Try to load existing index
         index_path = Path("./index")
         if index_path.exists():
             try:
@@ -44,14 +42,11 @@ def main() -> None:
     st.title("🔍 Mini-RAG: Local Document Search")
     st.markdown("*Search your PDF documents using semantic similarity*")
     
-    # Initialize RAG
     rag = initialize_rag()
     
-    # Sidebar
     with st.sidebar:
         st.header("⚙️ Configuration")
         
-        # Index management
         st.subheader("Index Management")
         
         if st.session_state.get('index_loaded', False):
@@ -75,7 +70,6 @@ def main() -> None:
         
         st.divider()
         
-        # Search settings
         st.subheader("Search Settings")
         top_k = st.slider(
             "Number of results",
@@ -87,7 +81,6 @@ def main() -> None:
         
         st.divider()
         
-        # Info
         st.subheader("ℹ️ About")
         st.markdown("""
         This is a local RAG system that:
@@ -158,7 +151,6 @@ def main() -> None:
                                 label_visibility="collapsed"
                             )
                             
-                            # Download link (simulated - in real scenario, link to PDF)
                             st.markdown(
                                 f"📄 *Source: {result['doc_id']}.pdf, Page {result['page']}*"
                             )

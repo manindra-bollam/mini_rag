@@ -2,16 +2,16 @@
 
 ## Overview
 
-Mini-RAG is a locally-running retrieval-augmented generation (RAG) system designed to perform semantic search over PDF documents without requiring external APIs or API keys. The system is built with modularity, testability, and extensibility in mind.
+Mini RAG is a locally running retrieval augmented generation (RAG) system designed to perform semantic search over PDF documents without requiring external APIs or API keys. The system is built with modularity, testability, and extensibility in mind.
 
 ## System Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                         User Layer                          │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐      │
-│  │  CLI (rag.py)│  │ Streamlit UI │  │  Python API  │      │
-│  └──────┬───────┘  └──────┬───────┘  └──────┬───────┘      │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐       │
+│  │  CLI (rag.py)│  │ Streamlit UI │  │  Python API(future)  │
+│  └──────┬───────┘  └──────┬───────┘  └──────┬───────┘       │
 └─────────┼──────────────────┼──────────────────┼─────────────┘
           │                  │                  │
           └──────────────────┼──────────────────┘
@@ -33,8 +33,8 @@ Mini-RAG is a locally-running retrieval-augmented generation (RAG) system design
 ┌─────────────────────────────┼─────────────────────────────────┐
 │                    Storage Layer                              │
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐       │
-│  │  PDF Files   │  │ FAISS Index  │  │    Chunks    │       │
-│  │  (./data/)   │  │ (./index/)   │  │  (pickle)    │       │
+│  │  PDF Files   │  │ FAISS Index  │  │    chunks    │       │
+│  │  (./data/)   │  │ (./index/)   │  │  (chunks.pkl)    │       │
 │  └──────────────┘  └──────────────┘  └──────────────┘       │
 └─────────────────────────────────────────────────────────────┘
 ```
@@ -56,14 +56,14 @@ Mini-RAG is a locally-running retrieval-augmented generation (RAG) system design
 1. Scan `./data/` directory for PDF files
 2. Extract text using pdfplumber
 3. Clean text (remove artifacts, normalize whitespace)
-4. Split into overlapping chunks with sentence-boundary awareness
+4. Split into overlapping chunks with sentence boundary awareness
 5. Return list of `Chunk` objects with metadata
 
 **Design Decisions**:
 
 - Used pdfplumber over PyPDF2 for better table/layout handling
 - Implemented overlap to preserve context across chunk boundaries
-- Sentence-aware splitting to avoid mid-sentence breaks
+- Sentence aware splitting to avoid mid sentence breaks
 - Configurable chunk size (default: 500 chars)
 
 ### 2. Embedding Engine (`embeddings.py`)
@@ -72,12 +72,12 @@ Mini-RAG is a locally-running retrieval-augmented generation (RAG) system design
 
 **Key Classes**:
 
-- `EmbeddingEngine`: Generates embeddings using sentence-transformers
+- `EmbeddingEngine`: Generates embeddings using sentence transformers
 - `FAISSIndex`: Manages FAISS vector index
 
 **Flow**:
 
-1. Load sentence-transformer model (`all-MiniLM-L6-v2`)
+1. Load sentence transformer model (`all-MiniLM-L6-v2`)
 2. Generate embeddings for all chunks (batch processing)
 3. Normalize embeddings for cosine similarity
 4. Build FAISS flat index with inner product metric
@@ -88,8 +88,8 @@ Mini-RAG is a locally-running retrieval-augmented generation (RAG) system design
 - Used sentence-transformers for ease of use and quality
 - Chose `all-MiniLM-L6-v2` for balance of speed/quality/size
 - L2 normalization + inner product = cosine similarity
-- Flat index (exact search) suitable for small-to-medium datasets
-- Can be extended to IVF/HNSW for larger datasets
+- Flat index (exact search) suitable for small to medium datasets
+- Can be extended to HNSW/IVF for larger datasets
 
 ### 3. RAG Engine (`rag_engine.py`)
 
@@ -191,7 +191,7 @@ mini-rag/
 1. **For 1K-10K PDFs**:
    - Use IVF index (IndexIVFFlat)
    - Increase batch size for embeddings
-   - Consider multi-threading
+   - Consider multi threading
 
 2. **For 10K+ PDFs**:
    - Use HNSW index (faster approximate search)
@@ -199,7 +199,7 @@ mini-rag/
    - Consider distributed storage
    - GPU acceleration for embeddings
 
-3. **For Real-Time Applications**:
+3. **For Real Time Applications**:
    - Pre-compute and cache embeddings
    - Use approximate indices (HNSW, IVF)
    - Implement result caching
@@ -277,7 +277,7 @@ def query_with_filter(query, filters):
 
 - Test full pipeline
 - Use small sample data
-- Verify end-to-end flow
+- Verify end to end flow
 
 ### Evaluation Tests
 

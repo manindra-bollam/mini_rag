@@ -4,7 +4,7 @@
 
 ### All Requirements Implemented
 
-#### ✅ Must-Have Requirements
+#### ✅ Must Have Requirements
 
 1. **PDF Ingestion** - Complete
    - Loads PDFs from `./data/` directory
@@ -18,7 +18,7 @@
    - Metadata tracking (doc_id, page, chunk_id)
 
 3. **Embeddings & Index** - Complete
-   - Local embeddings using sentence-transformers
+   - Local embeddings using sentence transformers
    - Model: `all-MiniLM-L6-v2` (384 dimensions)
    - FAISS flat index with cosine similarity
    - L2 normalization for accurate similarity
@@ -32,7 +32,6 @@
    - Comprehensive README.md
    - requirements.txt
    - pyproject.toml
-   - Setup script (setup.sh)
 
 #### ✅ All Bonus Features Implemented
 
@@ -42,10 +41,10 @@
 
 2. **Streamlit UI** - Complete
    - Interactive web interface
-   - Real-time search
+   - Real time search
    - Expandable result cards
    - Index building from UI
-   - Configurable top-k
+   - Configurable top k
 
 3. **Evaluation** - Complete
    - Keyword recall metrics
@@ -62,8 +61,6 @@
    - Type hints throughout
    - Docstrings for all functions
    - Black formatting
-   - Flake8 linting support
-   - Mypy type checking
 
 ### Project Structure
 
@@ -71,7 +68,7 @@
 mini-rag/
 ├── src/                           ✅ Core modules
 │   ├── __init__.py
-│   ├── document_processor.py     ✅ PDF loading & chunking
+│   ├── document_processor.py      ✅ PDF loading & chunking
 │   ├── embeddings.py              ✅ Embeddings & FAISS
 │   └── rag_engine.py              ✅ Main orchestrator
 ├── tests/                         ✅ Test suite
@@ -88,12 +85,10 @@ mini-rag/
 ├── config.py                      ✅ Configuration
 ├── requirements.txt               ✅ Dependencies
 ├── pyproject.toml                 ✅ Modern packaging
-├── setup.sh                       ✅ Setup script
 ├── Makefile                       ✅ Task automation
 ├── README.md                      ✅ Comprehensive docs
 ├── ARCHITECTURE.md                ✅ Technical docs
 ├── QUICKSTART.md                  ✅ Quick reference
-├── LICENSE                        ✅ MIT License
 └── .gitignore                     ✅ Git exclusions
 ```
 
@@ -101,10 +96,10 @@ mini-rag/
 
 #### Core Features
 
-- ✅ Multi-PDF loading and processing
+- ✅ Multi PDF loading and processing
 - ✅ Intelligent text chunking with overlap
 - ✅ Local embedding generation (no API needed)
-- ✅ Fast FAISS-based similarity search
+- ✅ Fast FAISS based similarity search
 - ✅ Configurable parameters (chunk size, overlap, top-k)
 - ✅ Index persistence and reloading
 - ✅ Clean error handling and validation
@@ -171,7 +166,7 @@ streamlit run app.py
 - ✅ Document processor tests (chunking, cleaning)
 - ✅ Embedding tests (generation, similarity)
 - ✅ FAISS index tests (build, search)
-- ✅ Integration tests (end-to-end)
+- ✅ Integration tests (end to end)
 - ✅ Edge case tests (empty index, errors)
 
 ### Time Investment
@@ -180,8 +175,8 @@ streamlit run app.py
 
 - Core implementation: 1.5 hours
 - CLI & JSON: 0.5 hours
-- Streamlit UI: 0.75 hours
-- Tests & evaluation: 0.5 hours
+- Streamlit UI: 0.5 hours
+- Tests & evaluation: 0.75 hours
 - Documentation: 0.5 hours
 - Code quality & polish: 0.25 hours
 
@@ -190,10 +185,8 @@ streamlit run app.py
 **Core:**
 
 - pdfplumber (PDF extraction)
-- sentence-transformers (embeddings)
+- sentence transformers (embeddings)
 - faiss-cpu (vector search)
-- numpy (numerical operations)
-- scikit-learn (utilities)
 
 **UI:**
 
@@ -203,19 +196,16 @@ streamlit run app.py
 
 - pytest (testing)
 - black (formatting)
-- flake8 (linting)
-- mypy (type checking)
 
-### What Makes This Implementation Special
+### What Makes This Implementation Special?
 
 1. **Complete Feature Set**: All required and bonus features
 2. **Production-Ready Code**: Type hints, tests, docs
 3. **Multiple Interfaces**: CLI, UI, API
 4. **Excellent Documentation**: 4 doc files + inline docs
-5. **Easy Setup**: One-command setup script
-6. **Extensible Design**: Clean architecture for additions
-7. **Sample Data**: Included PDF generator
-8. **Evaluation Tools**: Built-in quality assessment
+5. **Extensible Design**: Clean architecture for additions
+6. **Sample Data**: Included PDF generator
+7. **Evaluation Tools**: Built in quality assessment
 
 ### Key Design Decisions
 
@@ -251,34 +241,22 @@ streamlit run app.py
    python rag.py --query "Which sensors support 1200°C?"
    ```
 
-Or use the automated setup:
-
-```bash
-bash setup.sh
-```
-
 ### Deliverables
 
 ✅ Complete source code
 ✅ Comprehensive documentation
 ✅ Test suite
 ✅ Sample data generator
-✅ Setup automation
 ✅ Multiple usage examples
 ✅ Quality assurance tools
 
-### Future Enhancements (To-Do)
+### Future Enhancements (To Do)
 
-See README.md "To-Do List" section for 30+ planned improvements including:
+See README.md "To Do List" section for planned improvements including:
 
 - Hybrid search (semantic + keyword)
-- Multi-format support (Word, HTML)
+- Multi format support (Word, HTML)
 - GPU acceleration
-- Advanced evaluation metrics
 - API endpoint
 - Query history
 - And more...
-
----
-
-**This implementation exceeds the requirements** by providing not just the core RAG functionality, but a complete, production-ready system with multiple interfaces, comprehensive testing, excellent documentation, and thoughtful design decisions.

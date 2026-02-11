@@ -1,6 +1,5 @@
-#!/usr/bin/env python3
 """
-Mini-RAG CLI interface.
+Mini RAG CLI interface.
 
 Usage:
     python rag.py --build                                    # Build index from PDFs

@@ -1,22 +1,22 @@
 # Mini-RAG: Local Document Retrieval System
 
-A lightweight, locally-running RAG (Retrieval-Augmented Generation) system that performs semantic search over PDF documents without requiring any external APIs or API keys.
+A lightweight, locally running RAG (Retrieval-Augmented Generation) system that performs semantic search over PDF documents without requiring any external APIs or API keys.
 
 ## 🎯 Features
 
-### Core Features (Must Haves)
+### Core Features(Must haves)
 
 - ✅ **PDF Ingestion**: Loads and extracts text from multiple PDFs
-- ✅ **Smart Chunking**: Breaks documents into overlapping chunks with sentence-boundary awareness
-- ✅ **Local Embeddings**: Uses sentence-transformers for embedding generation
+- ✅ **Smart Chunking**: Breaks documents into overlapping chunks with sentence boundary awareness
+- ✅ **Local Embeddings**: Uses sentence transformers for embedding generation
 - ✅ **FAISS Indexing**: Fast similarity search with normalized cosine similarity
-- ✅ **CLI Interface**: Simple command-line interface for queries
+- ✅ **CLI Interface**: Simple command line interface for queries
 - ✅ **Reproducible**: Complete setup with requirements.txt and pyproject.toml
 
-### Bonus Features (Nice to Haves)
+### Bonus Features (Nice to haves)
 
 - ✅ **JSON Output**: Export results as structured JSON
-- ✅ **Streamlit UI**: Interactive web interface with real-time search
+- ✅ **Streamlit UI**: Interactive web interface with real time search
 - ✅ **Index Persistence**: Save and reload index from disk
 - ✅ **Quality Assurance**: Pytest test suite with coverage
 - ✅ **Code Quality**: Type hints, docstrings, and clean architecture
@@ -26,7 +26,7 @@ A lightweight, locally-running RAG (Retrieval-Augmented Generation) system that 
 ### Prerequisites
 
 - Python 3.10 or higher
-- pip or uv package manager
+- pip package manager
 
 ### Installation
 
@@ -57,7 +57,6 @@ Place your PDF files in the `./data/` directory:
 
 ```bash
 mkdir -p data
-# Copy your PDF files to ./data/
 ```
 
 **Don't have PDFs?** Generate sample files:
@@ -158,7 +157,7 @@ Then open http://localhost:8501 in your browser.
 
 Features of the UI:
 
-- 🔍 Interactive search with real-time results
+- 🔍 Interactive search with real time results
 - 📊 Visual display of similarity scores
 - 📄 Expandable result cards
 - ⚙️ Configurable number of results
@@ -171,16 +170,18 @@ mini-rag/
 ├── src/
 │   ├── __init__.py              # Package initialization
 │   ├── document_processor.py   # PDF loading and chunking
-│   ├── embeddings.py            # Embedding generation and FAISS index
+│   ├── embeddings.py            # Embeddings and FAISS index
 │   └── rag_engine.py            # Main RAG orchestration
 ├── tests/
 │   ├── __init__.py
 │   ├── test_document_processor.py
 │   └── test_embeddings.py
+│   └── test_rag_engine.py
 ├── data/                        # Place your PDFs here
 ├── index/                       # Generated index files (auto-created)
 ├── rag.py                       # CLI interface
 ├── app.py                       # Streamlit UI
+├── config.py                    # Handle the configuration for RAG
 ├── create_sample_pdfs.py        # Generate sample PDFs
 ├── requirements.txt             # Dependencies
 ├── pyproject.toml               # Modern Python packaging
@@ -253,12 +254,10 @@ With coverage:
 pytest --cov=src --cov-report=html
 ```
 
-Run linting:
+Run Formatting check:
 
 ```bash
-flake8 src tests
 black --check src tests
-mypy src
 ```
 
 ## 🏗️ Design Decisions
@@ -268,7 +267,7 @@ mypy src
 - **Chunk size**: 500 characters (configurable)
 - **Overlap**: 50 characters (10%)
 - **Rationale**: Balances context preservation with retrieval granularity
-- **Enhancement**: Sentence-boundary aware splitting to avoid mid-sentence breaks
+- **Enhancement**: Sentence boundary aware splitting to avoid mid sentence breaks
 
 ### 2. **Embedding Model**
 
@@ -284,12 +283,12 @@ mypy src
 
 - **Index**: FAISS IndexFlatIP (Inner Product)
 - **Metric**: Cosine similarity (via L2 normalization + inner product)
-- **Rationale**: Exact search for small-to-medium datasets, easy to understand and debug
+- **Rationale**: Exact search for small to medium datasets, easy to understand and debug
 
 ### 4. **Text Cleaning**
 
 - Remove excessive whitespace
-- Filter very short lines (likely headers/footers)
+- Filter very short lines (headers/footers)
 - Preserve paragraph structure
 - **Future**: Could add more sophisticated header/footer detection
 
@@ -302,23 +301,23 @@ mypy src
 
 ## ⏱️ Time Budget
 
-**Total time spent**: ~3.5 hours
+**Total time spent**: ~4.0 hours
 
 Breakdown:
 
-- Core RAG implementation (document processing, embeddings, indexing): 1.5 hours
+- Core RAG implementation (document processing, embeddings, indexing): 2.0 hours
 - CLI interface and JSON output: 0.5 hours
 - Streamlit UI: 0.75 hours
 - Testing and documentation: 0.5 hours
 - Code quality (types, docstrings, refactoring): 0.25 hours
 
-## 📋 To-Do List (Future Improvements)
+## 📋 To Do List (Future Improvements)
 
 ### Performance Optimizations
 
 - [ ] Implement semantic caching for repeated queries
 - [ ] Add batch processing for large PDF collections
-- [ ] Use approximate nearest neighbor search (HNSW) for large-scale deployment
+- [ ] Use approximate nearest neighbor search (HNSW) for large scale deployment
 - [ ] GPU acceleration for embedding generation
 
 ### Feature Enhancements
@@ -327,16 +326,13 @@ Breakdown:
 - [ ] Metadata filtering (date range, document type, custom tags)
 - [ ] Hybrid search (combine semantic + keyword/BM25)
 - [ ] Query expansion and rewriting
-- [ ] Multi-query support (ask multiple questions at once)
-- [ ] Highlighted excerpts in results
+- [ ] Multi query support (ask multiple questions at once)
 
 ### Quality Improvements
 
 - [ ] Better header/footer detection using ML
-- [ ] Table extraction and structured data handling
 - [ ] Image and figure extraction from PDFs
 - [ ] OCR support for scanned documents
-- [ ] Automatic evaluation with labeled query-answer pairs
 - [ ] Chunk quality metrics (coherence, completeness)
 
 ### User Experience
@@ -345,7 +341,7 @@ Breakdown:
 - [ ] PDF preview in Streamlit UI
 - [ ] Export to Markdown/HTML reports
 - [ ] Query history and favorites
-- [ ] Multi-user support with authentication
+- [ ] Multi user support with authentication
 - [ ] API endpoint (FastAPI) for integration
 
 ### Robustness
@@ -380,7 +376,7 @@ python rag.py --query "accuracy comparison"
 
 ## 🙏 Acknowledgments
 
-- **sentence-transformers**: For easy-to-use embedding models
+- **sentence-transformers**: For easy to use embedding models
 - **FAISS**: For efficient similarity search
 - **Streamlit**: For rapid UI development
 - **pdfplumber**: For reliable PDF text extraction

@@ -3,7 +3,7 @@ Evaluation module for testing retrieval quality.
 
 Implements simple recall proxy using keyword matching.
 """
-from typing import List, Dict, Tuple
+from typing import List, Dict
 from src.rag_engine import RAGEngine
 
 
@@ -28,7 +28,7 @@ class RAGEvaluator:
         Evaluate recall using keyword matching.
         
         A test case is considered successful if any of the expected keywords
-        appear in the top-k retrieved chunks.
+        appear in the top k retrieved chunks.
         
         Args:
             test_cases: List of dicts with 'query' and 'expected_keywords'
@@ -116,7 +116,7 @@ SENSOR_TEST_CASES = [
     },
     {
         'query': 'non-invasive flow measurement',
-        'expected_keywords': ['ultrasonic', 'non-invasive', 'no pressure drop']
+        'expected_keywords': ['ultrasonic', 'non invasive', 'no pressure drop']
     },
     {
         'query': 'humidity sensors temperature range',
@@ -132,7 +132,6 @@ SENSOR_TEST_CASES = [
 if __name__ == "__main__":
     import sys
     
-    # Load RAG engine
     print("Loading RAG engine...")
     rag = RAGEngine()
     
@@ -143,7 +142,6 @@ if __name__ == "__main__":
         print("Run: python rag.py --build")
         sys.exit(1)
     
-    # Run evaluation
     evaluator = RAGEvaluator(rag)
     
     print("\nRunning evaluation with keyword recall test...")

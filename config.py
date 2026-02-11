@@ -25,7 +25,7 @@ MAX_TOP_K = 20  # Maximum allowed top-k
 MAX_EXCERPT_LENGTH = 500  # Maximum length for text excerpts in display
 
 # Performance settings
-USE_GPU = False  # Set to True if you have a CUDA-enabled GPU
+USE_GPU = False  # Set to True if you have a CUDA enabled GPU
 
 # Index settings
 INDEX_TYPE = "flat"  # Options: "flat" (exact), "ivf" (approximate)

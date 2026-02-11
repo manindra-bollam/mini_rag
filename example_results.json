@@ -1,0 +1,23 @@
+[
+  {
+    "doc_id": "Product_Spec_SensorY",
+    "page": 1,
+    "chunk_id": 4,
+    "score": 0.3591,
+    "text": "Pressure Sensor Y250 - Technical Datasheet The Y250 pressure sensor supports measurement ranges up to 250 bar. Temperature limit: up to 180°C continuous operation. Features: stainless steel diaphragm, digital output (RS485), long-term stability ±0.1% FS/year. Applications include oil & gas pipelines, hydraulic systems, and industrial automation."
+  },
+  {
+    "doc_id": "Manual_SensorX",
+    "page": 1,
+    "chunk_id": 1,
+    "score": 0.2873,
+    "text": "Installation and Calibration Manual – Sensor X100 Ensure the sensor is mounted using a high-temperature-resistant fitting. Calibration Procedure: Connect the device to a stable 5V power supply. Use reference thermocouple for alignment. Safety Precautions: Do not expose cables to open flame or corrosive environments. Recalibration interval recommended every 12 months."
+  },
+  {
+    "doc_id": "Comparison_Sensors",
+    "page": 1,
+    "chunk_id": 0,
+    "score": 0.2758,
+    "text": "Comparison Table – Industrial Sensors The following table compares our main sensor models: Model | Max Temp (°C) | Accuracy | Output | Material X100 | 1200 | ±0.5°C | Analog | Inconel 600 Y250 | 180 | ±0.3°C | Digital | Stainless Steel T310 | 800 | ±0.2°C | Analog | Titanium Alloy The X100 model is best suited for extreme heat applications."
+  }
+]
